@@ -29,6 +29,8 @@ The following MATLAB scripts are provided:
 - classify_100_sample_cifar_qpf.m: Binary classification by QPF-NN against CIFAR-10 dataset using 100 samples and 100 trials.
 - classify_100_sample_gtsrb_qpf.m: Binary classification by QPF-NN against GTSRB dataset using 100 samples and 100 trials.
 
+Pre-processed dataset ready to be used by the MATLAB scripts above is provided only for GTSRB.  Please download other datasets from respective web sites.  MNIST dataset (e.g. train-labels.idx1-ubyte, etc.) is read directly by the MATLAB scripts.  CIFAR-10 dataset needs to be converted to MATLAB format using convert_cifar_test_to_matlab.m and convert_cifar_train_to_matlab.m.  EMNIST dataset is provided as MATLAB format by the above web site.
+
 In addition, the following MATLAB scripts are provided:
 
 - map_accuracy_all_data_mnist.nn.m: Map classification accuracy by NN against each pairs of different classes from MNIST dataset using all data.
