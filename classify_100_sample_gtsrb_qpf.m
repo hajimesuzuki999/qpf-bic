@@ -8,10 +8,70 @@ end
 
 load traffic_sign_data_scaled.mat test_labels test_features_scaled train_labels train_features_scaled valid_labels valid_features_scaled
 
+XTrain = train_features_scaled;
+XTest = test_features_scaled;
+
+number_of_train_images = 34799;
+number_of_test_images = 12630;
+
+tic
+
+% perform QPF
+ZTrain = zeros( 16, 16, 4, number_of_train_images );
+for index_image = 1 : number_of_train_images
+  
+  current_XTrain = XTrain( :, :, index_image );
+  current_output = zeros( 16, 16, 4 );
+
+  for index_j = 1 : 16
+
+    for index_k = 1 : 16
+
+      temp = current_XTrain( 2 * ( index_j - 1 ) + [ 1 2 ], 2 * ( index_k - 1 ) + [ 1 : 2 ] );
+      current_output( index_j, index_k, : ) = circuit_two_cnots( temp( : ) );
+
+    end
+
+  end
+
+  ZTrain( :, :, :, index_image ) = current_output;
+
+end
+XTrain = ZTrain;
+
+ZTest = zeros( 16, 16, 4, number_of_test_images );
+for index_image = 1 : number_of_test_images
+  
+  current_XTest = XTest( :, :, index_image );
+  current_output = zeros( 16, 16, 4 );
+
+  for index_j = 1 : 16
+
+    for index_k = 1 : 16
+
+      temp = current_XTest( 2 * ( index_j - 1 ) + [ 1 2 ], 2 * ( index_k - 1 ) + [ 1 : 2 ] );
+      current_output( index_j, index_k, : ) = circuit_two_cnots( temp( : ) );
+
+    end
+
+  end
+
+  ZTest( :, :, :, index_image ) = current_output;
+
+end
+XTest = ZTest;
+
+toc
+
+train_features_scaled = XTrain;
+test_features_scaled = XTest;
+
 % choose particular class randomly 100 of them, hopefully we have at least
 % 100 samples
 
 accuracy_all = zeros( 43, 43, 100 );
+
+tic
 
 for index_trial = 1 : 100
 
@@ -31,7 +91,7 @@ for index_trial = 1 : 100
         total_number_of_test_sample = total_number_of_sample * 0.2;
         number_of_pca_component = 4;
         
-        train_features_limited = zeros( 32, 32, 1, total_number_of_sample );
+        train_features_limited = zeros( 16, 16, 4, total_number_of_sample );
         train_labels_limited = zeros( total_number_of_sample, 1 );
         
         rng( prime_number_all( index_trial ) ) % For reproducibility
@@ -58,31 +118,7 @@ for index_trial = 1 : 100
         
         X_train = train_features_limited;
         y_train = train_labels_limited;
-  
-        %% perform QPF
-        Z_train = zeros( 16, 16, 4, total_number_of_sample );
-        for index_image = 1 : total_number_of_sample
           
-          current_XTrain = X_train( :, :, index_image );
-          current_output = zeros( 16, 16, 4 );
-        
-          for index_j = 1 : 16
-        
-            for index_k = 1 : 16
-        
-              temp = current_XTrain( 2 * ( index_j - 1 ) + [ 1 2 ], 2 * ( index_k - 1 ) + [ 1 : 2 ] );
-              current_output( index_j, index_k, : ) = circuit_two_cnots( temp( : ) );
-        
-            end
-        
-          end
-        
-          Z_train( :, :, :, index_image ) = current_output;
-        
-        end
-        
-        X_train = Z_train;
-        
         rng( prime_number_all( index_trial ) ) % For reproducibility
         hpartition = cvpartition( y_train, 'Holdout', 0.2, 'Stratify', true );
         
@@ -114,6 +150,8 @@ for index_trial = 1 : 100
   end
 
 end
+
+toc
 
 mean( accuracy_all( accuracy_all ~= 0 ) )
 
