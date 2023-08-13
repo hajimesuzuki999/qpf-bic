@@ -8,7 +8,7 @@ This repository contains MATLAB scripts for performing binary image classificati
 - CIFAR-10 (https://www.cs.toronto.edu/~kriz/cifar.html)
 - GTSRB (https://benchmark.ini.rub.de/)
 
-Two scenarios are considered.  The first scenario uses all data available.  The second scenario uses 100 samples (80 samples for training and 20 samples for testing) for each trial and 100 trials are performed.
+Two scenarios are considered.  The first scenario uses all data available.  The second scenario uses randomly selected 100 samples (80 samples for training and 20 samples for testing) for each trial and 100 trials are performed.
 
 The following MATLAB scripts are provided:
 
